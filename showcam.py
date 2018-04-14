@@ -14,7 +14,7 @@ from skimage.io import imsave
 from detect_shapes import detect
 
 def start_video_stream():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     while (True):
         # Capture frame-by-frame
@@ -22,8 +22,8 @@ def start_video_stream():
 
         # Our operations on the frame come here
         cimg = cv2.flip(frame, 1) # flipping it vertically
-        gray = cv2.cvtColor(cimg, cv2.COLOR_BGR2GRAY)  # making the image grey
         hsv = cv2.cvtColor(cimg, cv2.COLOR_BGR2HSV)
+        imsave('hsv.jpg', hsv)
         cimg = detect(cimg, hsv)
 
         # Display the resulting frame
