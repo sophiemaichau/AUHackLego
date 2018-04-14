@@ -21,10 +21,8 @@ def start_video_stream():
         ret, frame = cap.read()
 
         # Our operations on the frame come here
-        cimg = cv2.flip(frame, 1) # flipping it vertically
-        hsv = cv2.cvtColor(cimg, cv2.COLOR_BGR2HSV)
-        imsave('hsv.jpg', hsv)
-        cimg = detect(cimg, hsv)
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        cimg = detect(frame, hsv)
 
         # Display the resulting frame
         cv2.imshow('AUHack LegoMusic', cimg)
