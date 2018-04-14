@@ -3,7 +3,6 @@
 
 # import the necessary packages
 from pyimagesearch.shapedetector import ShapeDetector
-import argparse
 import imutils
 import cv2
 from skimage.io import imsave
@@ -33,4 +32,4 @@ def detect(image, hsv):
         c = c.astype("int")
         cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
-    return image
+    return image, cnts
