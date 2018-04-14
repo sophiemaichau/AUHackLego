@@ -20,12 +20,13 @@ def object_intervals(cnts):
     return min(heights), max(heights), heights, x_intervals
 
 def get_beats(x_intervals, image_width):
-    beats = [x*image_width/8 for x in range(0,7)]
+    beats = [x*int(image_width/8) for x in range(0,7)]
+    print('beats: ',beats)
     result = [0]*len(x_intervals)
-    for i in range(x_intervals):
-        idx0 = np.array([x_intervals[i][0] >= b for b in beats])
-        idx1 = np.array([x_intervals[i][1] < b for b in beats])
-        intervals = idx0 and idx1
+    for i in range(len(x_intervals)):
+        idx0 = np.array([x_intervals[i][0] < b for b in beats])
+        idx1 = np.array([x_intervals[i][1] >= b for b in beats])
+        intervals = np.logical_and(idx0, idx1)
         lower = np.argmax(intervals==1)
         upper = lower + intervals.sum()
         result[i] = (lower,upper)
@@ -63,8 +64,9 @@ def start_video_stream():
         min_y, max_y, heights, x_intervals = object_intervals(cnts)
         tone_list = tones(min_y, max_y)
         mapped_cnts = map_cnts_to_tones(heights, tone_list)
-        #print('mapped_cnts', mapped_cnts)
-
+        #print('tones: ', mapped_cnts)
+        object_beats = get_beats(x_intervals, 300)
+        #print('beats: ', object_beats)
 
         # Display the resulting frame
         #cv2.circle(cimg, (200, min_y), 3, (255, 0, 255), -1) # debugging heights
@@ -86,10 +88,9 @@ def draw_edges(im_path):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     cimg, cnts = detect(image, hsv)
     min_y, max_y, heights, x_intervals = object_intervals(cnts)
-    object_beats = get_beats(x_intervals, 640) # 640 is hardcoded.
     tone_list = tones(min_y, max_y)
-    print(object_beats)
     mapped_cnts = map_cnts_to_tones(heights, tone_list)
+    object_beats = get_beats(x_intervals, 300)
 
 #start_video_stream()
 draw_edges('lego.jpg')
