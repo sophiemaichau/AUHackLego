@@ -38,8 +38,19 @@ class NoteSender:
 
 
 ns = NoteSender(1, True)
-ns.notes = ["A", "B", "C", "D", "E", "F", "G", "S"]
+ns.notes = ["A", "A", "S", "S", "A", "A", "S", "S"]
+
+nss = NoteSender(2, True)
+nss.notes = ["S", "S", "S", "F", "S", "F", "F", "S"]
+
+nst = NoteSender(3, True)
+nst.notes = ["C", "D", "E", "C", "C", "S", "S", "G"]
+
 #ns.ampArray = [2, 30, 20, 20, 20, 30, 30, 50, 50]
 while True:
 	ns.sendToSonicPi()
-	time.sleep(3)
+	time.sleep(1)
+	nss.sendToSonicPi()
+	time.sleep(1)
+	nst.sendToSonicPi()
+	time.sleep(5)
