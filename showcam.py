@@ -82,6 +82,65 @@ def start_video_stream():
     cap.release()
     cv2.destroyAllWindows()
 
+def set_disjunction(lst1, lst2):
+    lst3 = [value for value in lst1 if value not in lst2]
+    return lst3
+
+def tone_nr_to_str(nr):
+    if nr == 1: return 'A'
+    if nr == 2: return 'B'
+    if nr == 3: return 'C'
+    if nr == 4: return 'D'
+    if nr == 5: return 'E'
+    if nr == 6: return 'F'
+    if nr == 7: return 'G'
+
+def beats_to_tracks(object_beats, tone_list):
+    object_beats = list(zip(object_beats, tone_list))
+    #print("zipped:", object_beats)
+    track_intervals = []
+    while len(object_beats) != 0:
+        r = []
+        # find smallest lower bound element
+        lower_bounds = np.array([lower for ((lower,_),_) in object_beats])
+        idx = np.argmin(lower_bounds)
+        #print('idx', idx)
+        r.append(object_beats[idx])
+
+        object_beats.pop(idx) # remove the beat with lowest lower bound
+        #print('object_beats', object_beats)
+        # now get all intervals that do not overlap with the one above. and add those to r
+        remove_idxs = []
+        for j in range(len(object_beats)):
+            non_overlapping = [(y < object_beats[j][0][0] or x > object_beats[j][0][1]) for ((x, y),_) in r]
+            if np.array(non_overlapping).all():
+                r.append(object_beats[j])
+                remove_idxs.append(j)
+                #r = r + [(lower,upper) for (lower,upper) in object_beats if upper < r[0][0] or lower > r[0][1]]
+
+        #object_beats = set_disjunction(object_beats, r) # remove all the elements from the above list
+        for j in remove_idxs:
+            object_beats.pop(j)
+
+        track_intervals.append(r.copy())
+        #print('r', r)
+
+    # now construct the tracks
+    res = []
+    #print('track_intervals', track_intervals)
+    for i in range(len(track_intervals)):
+        track = track_intervals[i]
+        tones = ['S','S','S','S','S','S','S','S']
+        for j in track:
+            a = j[0][0]
+            b = j[0][1]
+            #print(tones[a:b])
+            c = j[1]
+            for x in range(a,b):
+                tones[x] = tone_nr_to_str(c)
+        res.append([i+1] + tones)
+    return res
+
 # for testing
 def draw_edges(im_path):
     image = cv2.imread(im_path)
@@ -91,6 +150,8 @@ def draw_edges(im_path):
     tone_list = tones(min_y, max_y)
     mapped_cnts = map_cnts_to_tones(heights, tone_list)
     object_beats = get_beats(x_intervals, 300)
+    print('object_beats:', object_beats)
+    print('tracks:', beats_to_tracks(object_beats, mapped_cnts))
 
 #start_video_stream()
 draw_edges('lego.jpg')
