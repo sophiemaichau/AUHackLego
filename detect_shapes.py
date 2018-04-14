@@ -14,7 +14,7 @@ def detect(image, hsv):
     # and threshold it
     gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (15, 15), 0)
-    thresh = cv2.threshold(blurred, 100, 255, cv2.THRESH_BINARY)[1]
+    thresh = cv2.threshold(blurred, 110, 255, cv2.THRESH_BINARY)[1]
 
     # find contours in the thresholded image and initialize the
     # shape detector
