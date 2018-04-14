@@ -5,7 +5,6 @@
 from pyimagesearch.shapedetector import ShapeDetector
 import imutils
 import cv2
-from skimage.io import imsave
 
 def detect(image, hsv):
     resized = imutils.resize(hsv, width=300)
@@ -27,9 +26,14 @@ def detect(image, hsv):
     for c in cnts:
         # multiply the contour (x, y)-coordinates by the resize ratio,
         # then draw the contours and the name of the shape on the image
+        #peri = cv2.arcLength(c, True)
+        #print(cv2.boundingRect(c))
+        #approx = cv2.approxPolyDP(c, 0.04 * peri, True)
+        #print("approx:\n", approx)
         c = c.astype("float")
         c *= ratio
         c = c.astype("int")
+
         cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
 
     return image, cnts
