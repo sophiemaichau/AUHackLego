@@ -3,54 +3,33 @@ from pythonosc import osc_message_builder
 from pythonosc import udp_client
 
 
-
 class NoteSender:
+    def __init__(self, track, bass):
+        self.notes = []
+        self.arrayOfInstruments = []
+        self.pitchArray = []
+        self.arrayToSend = []
+        self.ampArray = []
+        self.track = track
+        self.useBase = bass
+        self.sender = udp_client.SimpleUDPClient('127.0.0.1', 4559)
 
-	def __init__(self, track, bass):
-		self.notes = []
-		self.arrayOfInstruments = []
-		self.pitchArray = []
-		self.arrayToSend = []
-		self.ampArray = []
-		self.track = track
-		self.useBase = bass
-		self.sender = udp_client.SimpleUDPClient('127.0.0.1', 4559)
+    def notes(self, noteArray):
+        self.notes.append(noteArray)
 
-	def notes(self, noteArray):
-		self.notes.append(noteArray)
+    def pitch(self, pitchArray):
+        self.pitchArray = pitchArray
 
-	def pitch(self, pitchArray):
-		self.pitchArray = pitchArray
+    def amp(self, ampArray):
+        self.ampArray = ampArray
 
-	def amp(self, ampArray):
-		self.ampArray = ampArray
-
-	def sendToSonicPi(self):
-		self.arrayToSend.append(self.track)
-		for note in self.notes:
-			self.arrayToSend.append(note)
-		for amp in self.ampArray:
-			self.arrayToSend.append(amp)
-		for pitch in self.pitchArray:
-			self.arrayToSend.append(pitch)
-		print(self.arrayToSend)
-		self.sender.send_message('/trigger/prophet', self.arrayToSend)
-
-
-ns = NoteSender(1, True)
-ns.notes = ["A", "A", "S", "S", "A", "A", "S", "S"]
-
-nss = NoteSender(2, True)
-nss.notes = ["S", "S", "S", "F", "S", "F", "F", "S"]
-
-nst = NoteSender(3, True)
-nst.notes = ["C", "D", "E", "C", "C", "S", "S", "G"]
-
-#ns.ampArray = [2, 30, 20, 20, 20, 30, 30, 50, 50]
-while True:
-	ns.sendToSonicPi()
-	time.sleep(1)
-	nss.sendToSonicPi()
-	time.sleep(1)
-	nst.sendToSonicPi()
-	time.sleep(5)
+    def sendToSonicPi(self):
+        self.arrayToSend.append(self.track)
+        for note in self.notes:
+            self.arrayToSend.append(note)
+        for amp in self.ampArray:
+            self.arrayToSend.append(amp)
+        for pitch in self.pitchArray:
+            self.arrayToSend.append(pitch)
+        print(self.arrayToSend)
+        self.sender.send_message('/trigger/prophet', self.arrayToSend)
