@@ -143,8 +143,9 @@ def start_video_stream():
         # Capture frame-by-frame
         ret, frame = cap.read()
         # Our operations on the frame come here
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        cimg, cnts = detect(frame, hsv)
+        cimg = cv2.flip(cv2.flip(frame, 0), 1)
+        hsv = cv2.cvtColor(cimg, cv2.COLOR_BGR2HSV)
+        cimg, cnts = detect(cimg, hsv)
         if len(cnts) != 0:
             min_y, max_y, heights, x_intervals = object_intervals(cnts)
             tone_list = tones(min_y, max_y)
